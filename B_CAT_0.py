@@ -6,6 +6,20 @@ import yfinance as yf
 from tkinter import Button, Entry, Tk, mainloop
 
 
+current_date = str(dt.date.today())
+start_date_ode = str(str(current_date[0:-2]) + str(int(current_date[-2::]) - 1))
+start_date_fye = str(str(int(current_date[0:4]) - 5) + str(current_date[4::]))
+
+
+def get_change(current, previous):
+    if current == previous:
+        return 0
+    try:
+        return (abs(current - previous) / previous) * 100.0
+    except ZeroDivisionError:
+        return float('INF')
+
+
 def get_commands_gui():
     command_entered = []
 
@@ -32,21 +46,22 @@ def get_commands_gui():
     return command_entered[0].upper()
 
 
-current_date = str(dt.date.today())
-start_date_ode = str(str(current_date[0:-2]) + str(int(current_date[-2::]) - 1))
-start_date_fye = str(str(int(current_date[0:4]) - 5) + str(current_date[4::]))
-
 coin_ticker_symbol = get_commands_gui()
 
-yf_data = yf.download(coin_ticker_symbol, start_date_fye, current_date)
-yf_data['Adj Close'].plot(figsize=(10, 6))
 
-plt.title(str(coin_ticker_symbol), fontsize=12)
-plt.ylabel('PRICE', fontsize=8)
-plt.xlabel('YEAR', fontsize=8)
-plt.grid(which="major", color='k', linestyle='-', linewidth=0.5)
+def create_graph_from_yf_data():
+    yf_data = yf.download(coin_ticker_symbol, start_date_fye, current_date)
+    yf_data['Adj Close'].plot(figsize=(10, 6))
 
-plt.show()
+    plt.title(str(coin_ticker_symbol), fontsize=12)
+    plt.ylabel('PRICE', fontsize=8)
+    plt.xlabel('YEAR', fontsize=8)
+    plt.grid(which="major", color='k', linestyle='-', linewidth=0.5)
+
+    plt.show()
+
+
+create_graph_from_yf_data()
 
 
 """
